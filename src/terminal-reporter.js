@@ -14,7 +14,7 @@ export function printTerminalReport(results) {
   console.log();
 
   const summaryTable = new Table({
-    head: [chalk.bold("Metric"), chalk.bold("Count")],
+    head: [chalk.bold("Status"), chalk.bold("Count")],
     colWidths: [25, 10],
     style: { head: [], border: [] },
   });
