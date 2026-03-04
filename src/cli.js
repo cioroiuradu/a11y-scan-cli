@@ -3,8 +3,12 @@
 import { program } from "commander";
 import chalk from "chalk";
 import ora from "ora";
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
+import { exec } from "node:child_process";
 import { scanUrl } from "./scanner.js";
 import { printTerminalReport } from "./terminal-reporter.js";
+import { generateHtmlReport } from "./html-reporter.js";
 
 program
   .name("a11y-scan")
@@ -13,7 +17,11 @@ program
   )
   .version("1.0.0")
   .argument("<url>", "URL to scan for accessibility issues")
-  .action(async (url) => {
+  .option(
+    "--html [filename]",
+    "generate an HTML report (default: a11y-report.html)",
+  )
+  .action(async (url, options) => {
     if (!/^https?:\/\//i.test(url)) {
       url = `https://${url}`;
     }
@@ -25,6 +33,24 @@ program
     try {
       const results = await scanUrl(url);
       spinner.succeed(`Scan complete for ${chalk.cyan(url)}`);
+
+      if (options.html !== undefined) {
+        const filename =
+          typeof options.html === "string" ? options.html : "a11y-report.html";
+        const outPath = resolve(filename);
+        const html = generateHtmlReport(results);
+        await writeFile(outPath, html, "utf-8");
+        console.log(chalk.green(`\n📄 HTML report saved to ${outPath}\n`));
+
+        const openCmd =
+          process.platform === "darwin"
+            ? "open"
+            : process.platform === "win32"
+              ? "start"
+              : "xdg-open";
+        exec(`${openCmd} "${outPath}"`);
+      }
+
       printTerminalReport(results);
     } catch (error) {
       spinner.fail("Scan failed");
