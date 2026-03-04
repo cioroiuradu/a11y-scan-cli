@@ -18,6 +18,9 @@
     "playwright",
     "scanner"
   ],
+  "scripts": {
+    "postinstall": "echo \"Installing Chromium browser for a11y-scan (required for scanning)...\" && npx playwright install chromium"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=18"

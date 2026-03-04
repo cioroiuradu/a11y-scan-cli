@@ -8,11 +8,7 @@ Run accessibility (a11y) scans on any URL from the command line. Uses **Playwrig
 npm install -g a11y-scan-cli
 ```
 
-After installing, make sure Playwright browsers are available:
-
-```bash
-npx playwright install chromium
-```
+All dependencies — including the Chromium browser binary needed by Playwright — are installed automatically.
 
 ## Usage
 
