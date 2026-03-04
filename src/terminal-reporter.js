@@ -1,6 +1,12 @@
+/**
+ * Prints axe-core scan results as formatted tables in the terminal:
+ * a summary table, a violations table, and an incomplete (manual review) table.
+ */
+
 import chalk from "chalk";
 import Table from "cli-table3";
 
+/** Chalk formatters mapped to axe-core severity levels. */
 const impactColor = {
   critical: chalk.bgRed.white.bold,
   serious: chalk.red.bold,
@@ -8,6 +14,7 @@ const impactColor = {
   minor: chalk.dim,
 };
 
+/** Print summary, violations, and incomplete tables to stdout. */
 export function printTerminalReport(results) {
   const { violations, passes, incomplete, inapplicable } = results;
 

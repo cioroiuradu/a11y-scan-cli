@@ -1,5 +1,10 @@
 #!/usr/bin/env node
 
+/**
+ * CLI entry point — parses arguments, runs the accessibility scan,
+ * prints results to the terminal, and optionally generates an HTML report.
+ */
+
 import { program } from "commander";
 import chalk from "chalk";
 import ora from "ora";
@@ -22,6 +27,7 @@ program
     "generate an HTML report (default: a11y-report.html)",
   )
   .action(async (url, options) => {
+    // Default to https if no protocol is provided
     if (!/^https?:\/\//i.test(url)) {
       url = `https://${url}`;
     }
@@ -34,6 +40,7 @@ program
       const results = await scanUrl(url);
       spinner.succeed(`Scan complete for ${chalk.cyan(url)}`);
 
+      // Generate HTML report if --html flag is present, then auto-open in browser
       if (options.html !== undefined) {
         const filename =
           typeof options.html === "string" ? options.html : "a11y-report.html";

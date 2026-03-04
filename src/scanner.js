@@ -1,6 +1,10 @@
 import { chromium } from "playwright";
 import AxeBuilder from "@axe-core/playwright";
 
+/**
+ * Launch a headless Chromium browser, navigate to the given URL,
+ * run an axe-core accessibility audit, and return a normalized results object.
+ */
 export async function scanUrl(url) {
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
