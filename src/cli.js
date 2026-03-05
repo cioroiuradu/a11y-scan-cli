@@ -14,6 +14,7 @@ import { exec } from "node:child_process";
 import { scanUrl } from "./scanner.js";
 import { printTerminalReport } from "./terminal-reporter.js";
 import { generateHtmlReport } from "./html-reporter.js";
+import { loadSession, interactiveLogin } from "./auth.js";
 
 program
   .name("a11y-scan")
@@ -37,7 +38,27 @@ program
     ).start();
 
     try {
-      const results = await scanUrl(url);
+      let session = await loadSession(url);
+      let results = await scanUrl(url, { storageState: session });
+
+      if (results.loginRequired) {
+        spinner.info("Login required — opening browser for authentication…");
+        console.log(
+          chalk.dim(
+            "  Complete the login in the browser window. It will close automatically.\n",
+          ),
+        );
+        session = await interactiveLogin(url);
+        spinner.start(`Scanning ${chalk.cyan(url)} for accessibility issues…`);
+        results = await scanUrl(url, { storageState: session });
+
+        if (results.loginRequired) {
+          throw new Error(
+            "Still redirected to login after authentication. Session may not have been saved correctly.",
+          );
+        }
+      }
+
       spinner.succeed(`Scan complete for ${chalk.cyan(url)}`);
 
       // Generate HTML report if --html flag is present, then auto-open in browser

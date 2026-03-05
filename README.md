@@ -71,6 +71,16 @@ Shown only when some rules need manual review. Each row contains:
 | **Description** | A short explanation of what needs to be reviewed      |
 | **Elements**    | Number of DOM elements that require manual checking   |
 
+## Authenticated pages
+
+If the target URL redirects to a login page, the CLI detects it automatically — no extra flags needed.
+
+**First scan** — a visible browser window opens so you can log in manually. Once authentication is complete the browser closes, the session is saved, and the scan continues.
+
+**Subsequent scans** — the saved session is reused automatically. This works across different paths on the same domain.
+
+Sessions are stored per-domain in `~/.a11y-scan/` and contain only cookies and local storage (no passwords). If a session expires, the login browser will open again on the next scan.
+
 ## Development
 
 ```bash
